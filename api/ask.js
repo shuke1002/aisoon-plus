@@ -1,21 +1,43 @@
-import { OpenAI } from 'openai';
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>アイスーンプラス</title>
+</head>
+<body>
+  <h1>アイスーンプラス - 株価予想AI</h1>
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  <form id="ask-form">
+    <input type="text" id="question" placeholder="質問を入力してください（例：トヨタの株価予想）" style="width: 300px;" required />
+    <button type="submit">送信</button>
+  </form>
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  <div id="response" style="margin-top: 20px; white-space: pre-wrap;"></div>
 
-  const { question } = req.body;
-  if (!question) return res.status(400).json({ error: '質問が空です' });
+  <script>
+    const form = document.getElementById("ask-form");
+    const responseDiv = document.getElementById("response");
 
-  try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: `株式投資の視点で答えて：${question}` }]
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = document.getElementById("question").value;
+
+      responseDiv.textContent = "回答を生成中です…";
+
+      try {
+        const res = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+
+        const data = await res.json();
+        responseDiv.textContent = data.message || "回答が取得できませんでした。";
+      } catch (err) {
+        responseDiv.textContent = "エラーが発生しました。";
+      }
     });
-    const answer = completion.choices[0].message.content;
-    res.status(200).json({ answer });
-  } catch (err) {
-    res.status(500).json({ error: 'APIエラー', detail: err.message });
-  }
-}
+  </script>
+</body>
+</html>
+
