@@ -36,11 +36,12 @@
           body: JSON.stringify({ message: question }),
         });
         const data = await res.json();
-        responseDiv.textContent = "AIの回答：\n" + (data.message || data.error);
+        responseDiv.textContent = "AIの回答：\n" + (data.message || data.error || "エラーが発生しました。");
       } catch (err) {
-        responseDiv.textContent = "エラーが発生しました：" + err.message;
+        responseDiv.textContent = "通信エラー：" + err.message;
       }
     });
   </script>
 </body>
 </html>
+
