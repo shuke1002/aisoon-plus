@@ -1,4 +1,4 @@
-import OpenAI from "openai"; // ← 修正済み
+import OpenAI from "openai";← 修正済み
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
