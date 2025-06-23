@@ -12,9 +12,8 @@
         body: JSON.stringify({ message: question }),
       });
 
-      // サーバー側でエラーが起きているかをチェック
       if (!res.ok) {
-        const errorText = await res.text(); // ← JSONじゃない可能性もあるので .text()
+        const errorText = await res.text();
         responseDiv.textContent = `⚠️ サーバーエラー (${res.status}):\n${errorText}`;
         return;
       }
