@@ -1,28 +1,46 @@
-<h2>質問してみよう</h2>
-<form id="ask-form">
-  <input type="text" id="question" placeholder="例：三菱重工の株価は？" required style="width: 60%;" />
-  <button type="submit">送信</button>
-</form>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIsoon+（仮）</title>
+</head>
+<body>
+  <h1>AIsoon+（仮）</h1>
+  <p>〜ゆうすけ専用 株式AI質問サイト〜</p>
 
-<div id="response" style="margin-top:20px;"></div>
+  <h2>銘柄評価</h2>
+  <p>AI評価（5段階）：★★★★★</p>
 
-<script>
-document.getElementById("ask-form").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const question = document.getElementById("question").value;
-  const responseDiv = document.getElementById("response");
-  responseDiv.textContent = "送信中...";
+  <hr />
 
-  try {
-    const res = await fetch("/api/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: question }),
+  <h2>質問してみよう</h2>
+  <form id="ask-form">
+    <input type="text" id="question" placeholder="例：グリーンズの株価予想は？" required style="width: 60%;" />
+    <button type="submit">送信</button>
+  </form>
+
+  <div id="response" style="margin-top: 20px; white-space: pre-wrap;"></div>
+
+  <script>
+    document.getElementById("ask-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const question = document.getElementById("question").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.textContent = "送信中...";
+
+      try {
+        const res = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: question }),
+        });
+        const data = await res.json();
+        responseDiv.textContent = "AIの回答：\n" + (data.message || data.error);
+      } catch (err) {
+        responseDiv.textContent = "エラーが発生しました：" + err.message;
+      }
     });
-    const data = await res.json();
-    responseDiv.textContent = "AIの回答：" + (data.message || data.error);
-  } catch (err) {
-    responseDiv.textContent = "エラーが発生しました：" + err.message;
-  }
-});
-</script>
+  </script>
+</body>
+</html>
