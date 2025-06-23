@@ -7,7 +7,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "POSTメソッドだけ対応しています" });
   }
 
-  const { question } = req.body;
+  // 🔧 修正ポイント：フロントエンドは "message" を送ってくるのでここで受け取る
+  const { message: question } = req.body;
 
   if (!question || question.trim() === "") {
     return res.status(400).json({ message: "質問が空です" });
