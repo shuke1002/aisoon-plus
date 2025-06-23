@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AIsoon+（仮）</title>
 </head>
 <body>
-  <h1>AIsoon+ 株価予測AI</h1>
-  <p>気になる株について聞いてください👇</p>
+  <h1>AIsoon+（仮）</h1>
+  <p>〜ゆうすけ専用 株式AIサイト〜</p>
 
-  <input type="text" id="question" placeholder="例：三菱重工は今後上がる？" size="50">
-  <button onclick="askAI()">質問する</button>
+  <h3>銘柄評価</h3>
+  <p>AI評価（5段階）：★★★★★</p>
 
-  <p id="response"></p>
+  <h3>質問してみよう</h3>
+  <input type="text" id="question" placeholder="株について聞いてみよう" size="40"/>
+  <button onclick="askQuestion()">送信</button>
+
+  <h3>AIの回答：</h3>
+  <div id="answer" style="white-space: pre-wrap;"></div>
 
   <script>
-    async function askAI() {
+    async function askQuestion() {
       const question = document.getElementById("question").value;
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
+        body: JSON.stringify({ question }),
       });
+
       const data = await res.json();
-      document.getElementById("response").innerText = data.message || "エラーが発生しました";
+      document.getElementById("answer").innerText = data.message || "エラーが発生しました。";
     }
   </script>
 </body>
