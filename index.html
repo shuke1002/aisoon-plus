@@ -2,24 +2,28 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIsoon+（仮） | 株式投資支援AI</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>AIsoon+（仮）</title>
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <header class="bg-white shadow p-4">
-    <h1 class="text-2xl font-bold">AIsoon+（仮）</h1>
-    <p class="text-sm text-gray-600">〜ゆうすけ専用 株式AI強化サイト〜</p>
-  </header>
+<body>
+  <h1>AIsoon+ 株価予測AI</h1>
+  <p>気になる株について聞いてください👇</p>
 
-  <main class="p-6 space-y-6">
-    <section class="bg-white rounded-xl p-6 shadow">
-      <h2 class="text-xl font-semibold mb-2">📊 銘柄評価</h2>
-      <div class="flex items-center space-x-4">
-        <label>AI評価（5段階）:</label>
-        <div class="text-yellow-400 text-2xl">★★★★★</div>
-      </div>
-    </section>
-  </main>
+  <input type="text" id="question" placeholder="例：三菱重工は今後上がる？" size="50">
+  <button onclick="askAI()">質問する</button>
+
+  <p id="response"></p>
+
+  <script>
+    async function askAI() {
+      const question = document.getElementById("question").value;
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question })
+      });
+      const data = await res.json();
+      document.getElementById("response").innerText = data.message || "エラーが発生しました";
+    }
+  </script>
 </body>
 </html>
