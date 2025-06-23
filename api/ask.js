@@ -1,43 +1,30 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>アイスーンプラス</title>
-</head>
-<body>
-  <h1>アイスーンプラス - 株価予想AI</h1>
+import { OpenAI } from "openai";
 
-  <form id="ask-form">
-    <input type="text" id="question" placeholder="質問を入力してください（例：トヨタの株価予想）" style="width: 300px;" required />
-    <button type="submit">送信</button>
-  </form>
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  <div id="response" style="margin-top: 20px; white-space: pre-wrap;"></div>
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "POSTメソッドだけ対応しています" });
+  }
 
-  <script>
-    const form = document.getElementById("ask-form");
-    const responseDiv = document.getElementById("response");
+  const { question } = req.body;
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const question = document.getElementById("question").value;
+  if (!question || question.trim() === "") {
+    return res.status(400).json({ message: "質問が空です" });
+  }
 
-      responseDiv.textContent = "回答を生成中です…";
-
-      try {
-        const res = await fetch("/api/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question }),
-        });
-
-        const data = await res.json();
-        responseDiv.textContent = data.message || "回答が取得できませんでした。";
-      } catch (err) {
-        responseDiv.textContent = "エラーが発生しました。";
-      }
+  try {
+    const chatCompletion = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "あなたは株式投資に詳しいアシスタントです。" },
+        { role: "user", content: question }
+      ]
     });
-  </script>
-</body>
-</html>
 
+    const answer = chatCompletion.choices[0].message.content;
+    res.status(200).json({ message: answer });
+  } catch (err) {
+    res.status(500).json({ message: "APIエラー", details: err.message });
+  }
+}
