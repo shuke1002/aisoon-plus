@@ -1,28 +1,64 @@
-<script>
-  document.getElementById("ask-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const question = document.getElementById("question").value;
-    const responseDiv = document.getElementById("response");
-    responseDiv.textContent = "送信中...";
-
-    try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: question }),
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        responseDiv.textContent = `⚠️ サーバーエラー (${res.status}):\n${errorText}`;
-        return;
-      }
-
-      const data = await res.json();
-      responseDiv.textContent = "✅ AIの回答：\n" + (data.message || "（メッセージなし）");
-
-    } catch (err) {
-      responseDiv.textContent = "💥 通信エラー：\n" + err.message;
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIsoon+（仮）</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
     }
-  });
-</script>
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>AIsoon+（仮）</h1>
+  <p>〜ゆうすけ専用 株式AI質問サイト〜</p>
+
+  <h2>銘柄評価</h2>
+  <p>AI評価（5段階）：★★★★★</p>
+
+  <hr />
+
+  <h2>質問してみよう</h2>
+  <form id="ask-form">
+    <input type="text" id="question" placeholder="例：グリーンズの株価予想は？" required style="width: 60%;" />
+    <button type="submit">送信</button>
+  </form>
+
+  <div id="response"></div>
+
+  <script>
+    document.getElementById("ask-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const question = document.getElementById("question").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.textContent = "送信中...";
+
+      try {
+        const res = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: question }),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          responseDiv.textContent = `⚠️ サーバーエラー (${res.status}):\n${errorText}`;
+          return;
+        }
+
+        const data = await res.json();
+        responseDiv.textContent = "✅ AIの回答：\n" + (data.message || "（メッセージなし）");
+
+      } catch (err) {
+        responseDiv.textContent = "💥 通信エラー：\n" + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
