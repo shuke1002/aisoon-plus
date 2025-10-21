@@ -1,0 +1,19 @@
+// api/scan.js
+export default async function handler(req, res) {
+  try {
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL; // VercelのEnvに入れたURL
+    if (!webhookUrl) throw new Error("DISCORD_WEBHOOK_URL が未設定です");
+
+    const message = { content: "🟢 押し目サイン検出テスト：AIsoon+ 稼働中" };
+
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(message),
+    });
+
+    res.status(200).json({ ok: true, message: "通知を送信しました！" });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e) });
+  }
+}
