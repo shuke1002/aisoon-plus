@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const url = process.env.DISCORD_WEBHOOK_URL;
     if (!url) return res.status(500).json({ ok:false, error:"DISCORD_WEBHOOK_URL が未設定です" });
 
-    // ブラウザ(GET)でもツール(POST)でもOK
+    // GET でも POST でもOKにする
     if (req.method !== "GET" && req.method !== "POST") {
       return res.status(405).json({ ok:false, error:"Method Not Allowed" });
     }
